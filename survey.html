@@ -5,329 +5,487 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gurkha Technology Service Quote Generator</title>
     <style>
-        /* CSS styles for clarity and layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, input[type=text] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 20px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #quoteResult {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to Gurkha Technology's Service Quote Generator</h1>
-
-    <!-- Client Information Section -->
-    <form id="clientInfoForm">
-        <label for="name">Your Name:</label>
+    <h1>Gurkha Technology Service Quote Generator</h1>
+    <form>
+        <!-- Client Information -->
+        <h2>Client Information</h2>
+        <label for="name">Your Name:</label><br>
         <input type="text" id="name" name="name" required><br><br>
-        
-        <label for="company">Company Name:</label>
-        <input type="text" id="company" name="company"><br><br>
-        
-        <label for="contact">Contact Information:</label>
-        <input type="text" id="contact" name="contact" required><br><br>
-    </form>
 
-    <!-- Service Selection Section -->
-    <form id="serviceForm">
-        <label for="service">Which service are you interested in?</label><br>
+        <label for="company">Company Name (if applicable):</label><br>
+        <input type="text" id="company" name="company"><br><br>
+
+        <label for="contact">Contact Information:</label><br>
+        <input type="text" id="contact" name="contact" required><br><br>
+
+        <!-- Service Selection -->
+        <h2>Service Selection</h2>
+        <label for="service">Select a Service:</label><br>
         <select id="service" name="service" onchange="populateServiceDetails()">
-            <option value="" selected disabled>Please select</option>
+            <option value="" selected disabled>Select a service...</option>
             <option value="digital_marketing">Digital Marketing</option>
             <option value="google_ads">Google Ads</option>
             <option value="tiktok_video_creation">TikTok Video Creation</option>
             <option value="design_services">Design Services</option>
             <option value="web_development">Web Development</option>
             <option value="seo_services">SEO Services</option>
-        </select>
-    </form>
+        </select><br><br>
 
-    <!-- Service Details Section (Populated Dynamically) -->
-    <form id="detailsForm" class="calculator">
-        <!-- Dynamic details based on service selection will be populated here -->
-    </form>
+        <!-- Service Details -->
+        <div id="serviceDetails"></div>
 
-    <!-- Quote Calculator Section -->
-    <div id="quoteCalculator">
-        <h2>Quote Calculator</h2>
-        <p id="quoteResult">Please select a service to calculate the quote</p>
-        <button onclick="calculateQuote()">Calculate Quote</button>
-    </div>
+        <!-- Calculate Quote Button -->
+        <button type="button" onclick="calculateQuote()">Calculate Quote</button>
+
+        <!-- Quote Result -->
+        <div id="quoteResult"></div>
+    </form>
 
     <script>
-        // JavaScript code for dynamic form population and quote calculation
-
-        // Sample service data based on the JSON provided
-        const serviceData = {
-            "digital_marketing": {
-                "facebook_instagram": {
-                    "packages": {
-                        "GT1": {
-                            "page_management": true,
-                            "creative_designs": 4,
-                            "total_cost": 30000,
-                            "expected_reach": "80K+"
-                        },
-                        "GT2": {
-                            "page_management": true,
-                            "creative_designs": 8,
-                            "total_cost": 50000,
-                            "expected_reach": "133K+"
-                        },
-                        "GT3": {
-                            "page_management": true,
-                            "creative_designs": 18,
-                            "total_cost": 100000,
-                            "expected_reach": "266K+"
-                        },
-                        "GT4": {
-                            "page_management": true,
-                            "creative_designs": 20,
-                            "total_cost": 150000,
-                            "expected_reach": "upto $200"
+        // JSON data for services and their details
+        const servicesData = {
+            "company_name": "Gurkha Technology Pvt Ltd",
+            "services": {
+                "digital_marketing": {
+                    "facebook_instagram": {
+                        "packages": {
+                            "GT1": {
+                                "page_management": true,
+                                "creative_designs": 4,
+                                "total_cost": 30000,
+                                "expected_reach": "80K+"
+                            },
+                            "GT2": {
+                                "page_management": true,
+                                "creative_designs": 8,
+                                "total_cost": 50000,
+                                "expected_reach": "133K+"
+                            },
+                            "GT3": {
+                                "page_management": true,
+                                "creative_designs": 18,
+                                "total_cost": 100000,
+                                "expected_reach": "266K+"
+                            },
+                            "GT4": {
+                                "page_management": true,
+                                "creative_designs": 20,
+                                "total_cost": 50000,
+                                "expected_reach": "upto $200"
+                            }
+                        }
+                    },
+                    "google_ads": {
+                        "impressions": "70,000 - 1,00,000 in Nepal",
+                        "number_of_campaigns": 2,
+                        "designs": "36 Designs (sizes) with 2 Variations",
+                        "total_cost_per_month": {
+                            "including_credit": "NPR. 30,000/-",
+                            "excluding_credit": "NPR. 20,000/-"
                         }
                     }
                 },
-                "google_ads": {
-                    "impressions": "70,000 - 1,00,000 in Nepal",
-                    "number_of_campaigns": 2,
-                    "designs": "36 Designs (sizes) with 2 Variations",
-                    "total_cost_per_month": {
-                        "including_credit": "NPR. 30,000/-",
-                        "excluding_credit": "NPR. 20,000/-"
-                    }
-                }
-            },
-            "tiktok_video_creation": {
-                "basic_package": {
-                    "videos_created": 4,
-                    "price": "Rs 15,000",
-                    "duration": "2-4 weeks"
-                },
-                "standard_package": {
-                    "videos_created": 8,
-                    "price": "Rs 25,000",
-                    "duration": "4-6 weeks"
-                },
-                "premium_package": {
-                    "videos_created": 16,
-                    "price": "Rs 40,000",
-                    "duration": "6-8 weeks"
-                }
-            },
-            "design_services": {
-                "branding_identity": {
-                    "logo_design_only": "Rs 15,000",
-                    "logo_with_identity_package": "Rs 30,000"
-                },
-                "promotion_materials": {
-                    "a4_poster_design": "Rs 15,000",
-                    "single_leaflet": "Rs 7,500",
-                    "bi_fold_brochure": "Rs 8,500",
-                    "tri_fold_brochure": "Rs 11,000",
-                    "prospectus_catalogue_design": "Rs 30,000",
-                    "dangler_streamer_wobbler_design": "Rs 2,500",
-                    "stickers": "Rs 1,500",
-                    "calendars_desk_wall": "Rs 5,500",
-                    "shelf_strips": "Rs 1,500",
-                    "table_tent_design": "Rs 2,000"
-                },
-                "outdoors": {
-                    "flex_hoarding_board": "Rs 4,500",
-                    "trade_booth_design": "Rs 7,500",
-                    "complete_exhibition_stall": "Rs 15,000"
-                },
-                "packaging": {
-                    "labeling_design": "Rs 7,500",
-                    "sack_packaging_design": "Rs 9,500"
-                }
-            },
-            "web_development": {
-                "generic_rates": {
-                    "dynamic_page_website": {
-                        "starter": "NRs 35,000",
-                        "standard": "NRs 60,000",
-                        "premium_ecommerce": "NRs 85,000"
+                "tiktok_video_creation": {
+                    "basic_package": {
+                        "videos_created": 4,
+                        "price": "Rs 15,000",
+                        "duration": "2-4 weeks"
+                    },
+                    "standard_package": {
+                        "videos_created": 8,
+                        "price": "Rs 25,000",
+                        "duration": "4-6 weeks"
+                    },
+                    "premium_package": {
+                        "videos_created": 16,
+                        "price": "Rs 40,000",
+                        "duration": "6-8 weeks"
                     }
                 },
-                "e_commerce_rates": {
-                    "starter": "NRs 50,000",
-                    "standard": "NRs 75,000",
-                    "premium": "NRs 100,000"
-                }
-            },
-            "seo_services": {
-                "basic_package": {
-                    "price_per_month": "Rs 10,000",
-                    "initial_setup_fee": "Rs 2500",
-                    "duration": "Minimum 3 months"
+                "design_services": {
+                    "branding_identity": {
+                        "logo_design_only": "Rs 15,000",
+                        "logo_with_identity_package": "Rs 30,000"
+                    },
+                    "promotion_materials": {
+                        "a4_poster_design": "Rs 15,000",
+                        "single_leaflet": "Rs 7,500",
+                        "bi_fold_brochure": "Rs 8,500",
+                        "tri_fold_brochure": "Rs 11,000",
+                        "prospectus_catalogue_design": "Rs 30,000",
+                        "dangler_streamer_wobbler_design": "Rs 2,500",
+                        "stickers": "Rs 1,500",
+                        "calendars_desk_wall": "Rs 5,500",
+                        "shelf_strips": "Rs 1,500",
+                        "table_tent_design": "Rs 2,000"
+                    },
+                    "outdoors": {
+                        "flex_hoarding_board": "Rs 4,500",
+                        "trade_booth_design": "Rs 7,500",
+                        "complete_exhibition_stall": "Rs 15,000"
+                    },
+                    "packaging": {
+                        "labeling_design": "Rs 7,500",
+                        "sack_packaging_design": "Rs 9,500"
+                    }
                 },
-                "advanced_package": {
-                    "price_per_month": "Rs 20,000",
-                    "initial_setup_fee": "Rs 2500",
-                    "duration": "Minimum 6 months"
+                "web_development": {
+                    "generic_rates": {
+                        "dynamic_page_website": {
+                            "starter": "NRs 35,000",
+                            "standard": "NRs 60,000",
+                            "premium_ecommerce": "NRs 85,000"
+                        }
+                    },
+                    "e_commerce_rates": {
+                        "starter": "NRs 50,000",
+                        "standard": "NRs 75,000",
+                        "premium": "NRs 100,000"
+                    }
                 },
-                "custom_services": {
-                    "description": "Customized based on requirements and scope of work"
+                "seo_services": {
+                    "basic_package": {
+                        "price_per_month": "Rs 10,000",
+                        "initial_setup_fee": "Rs 2500",
+                        "duration": "Minimum 3 months"
+                    },
+                    "advanced_package": {
+                        "price_per_month": "Rs 20,000",
+                        "initial_setup_fee": "Rs 2500",
+                        "duration": "Minimum 6 months"
+                    },
+                    "custom_services": {
+                        "description": "Customized based on requirements and scope of work"
+                    }
                 }
             }
         };
 
         // Function to populate service details based on selection
         function populateServiceDetails() {
-            const serviceType = document.getElementById('service').value;
-            const detailsForm = document.getElementById('detailsForm');
-            let html = '';
+            const serviceSelect = document.getElementById('service');
+            const selectedService = serviceSelect.value;
+            const serviceDetailsDiv = document.getElementById('serviceDetails');
 
-            if (serviceType === '') {
-                detailsForm.innerHTML = ''; // Clear form if no service selected
-                return;
-            }
-
-            switch (serviceType) {
+            switch (selectedService) {
                 case 'digital_marketing':
-                    html += '<label for="platform">Preferred Platform:</label><br>';
-                    html += '<select id="platform" name="platform">';
-                    html += '<option value="facebook_instagram">Facebook & Instagram</option>';
-                    html += '<option value="other">Other (Specify)</option>';
-                    html += '</select><br><br>';
-                    html += '<label for="package">Preferred Package:</label><br>';
-                    html += '<select id="package" name="package">';
-                    html += '<option value="" selected disabled>Please select</option>';
-                    html += '<option value="GT1">GT1 - Page Management + 4 Creative Designs (80K+ Reach)</option>';
-                    html += '<option value="GT2">GT2 - Page Management + 8 Creative Designs (133K+ Reach)</option>';
-                    html += '<option value="GT3">GT3 - Page Management + 18 Creative Designs (266K+ Reach)</option>';
-                    html += '<option value="GT4">GT4 - Page Management + 20 Creative Designs (upto $200)</option>';
-                    html += '</select><br><br>';
-                    html += '<label for="expectedReach">Expected Reach (if applicable):</label><br>';
-                    html += '<input type="text" id="expectedReach" name="expectedReach"><br><br>';
+                    serviceDetailsDiv.innerHTML = `
+                        <h2>Digital Marketing Services</h2>
+                        <label for="digitalPlatform">Preferred Platform:</label><br>
+                        <select id="digitalPlatform" name="digitalPlatform">
+                            <option value="facebook_instagram">Facebook & Instagram</option>
+                        </select><br><br>
+                        <div id="digitalPackage"></div><br>
+                    `;
+                    populateDigitalPackages();
                     break;
                 case 'google_ads':
-                    html += '<label for="impressions">Expected Impressions:</label><br>';
-                    html += '<input type="text" id="impressions" name="impressions" value="70,000 - 1,00,000 in Nepal"><br><br>';
-                    html += '<label for="campaigns">Number of Campaigns:</label><br>';
-                    html += '<input type="number" id="campaigns" name="campaigns" value="2"><br><br>';
-                    html += '<label for="includeCredit">Include Credit?</label><br>';
-                    html += '<input type="checkbox" id="includeCredit" name="includeCredit" value="Yes"> Yes<br>';
-                    html += '<input type="checkbox" id="includeCredit" name="includeCredit" value="No"> No<br><br>';
+                    serviceDetailsDiv.innerHTML = `
+                        <h2>Google Ads Services</h2>
+                        <label for="impressions">Impressions:</label><br>
+                        <input type="text" id="impressions" name="impressions" value="${servicesData.services[selectedService].google_ads.impressions}" readonly><br><br>
+                        <label for="campaigns">Number of Campaigns:</label><br>
+                        <input type="text" id="campaigns" name="campaigns" value="${servicesData.services[selectedService].google_ads.number_of_campaigns}" readonly><br><br>
+                        <label for="designs">Designs:</label><br>
+                        <input type="text" id="designs" name="designs" value="${servicesData.services[selectedService].google_ads.designs}" readonly><br><br>
+                        <label for="totalCost">Total Cost Per Month (Including Credit):</label><br>
+                        <input type="text" id="totalCost" name="totalCost" value="${servicesData.services[selectedService].google_ads.total_cost_per_month.including_credit}" readonly><br><br>
+                    `;
                     break;
                 case 'tiktok_video_creation':
-                    html += '<label for="packageType">Package Type:</label><br>';
-                    html += '<select id="packageType" name="packageType">';
-                    html += '<option value="basic">Basic - 4 Videos</option>';
-                    html += '<option value="standard">Standard - 8 Videos</option>';
-                    html += '<option value="premium">Premium - 16 Videos</option>';
-                    html += '</select><br><br>';
-                    html += '<label for="numberOfVideos">Number of Videos:</label><br>';
-                    html += '<input type="number" id="numberOfVideos" name="numberOfVideos"><br><br>';
+                    serviceDetailsDiv.innerHTML = `
+                        <h2>TikTok Video Creation Services</h2>
+                        <label for="videoPackage">Package Type:</label><br>
+                        <select id="videoPackage" name="videoPackage">
+                            <option value="basic_package">Basic Package</option>
+                            <option value="standard_package">Standard Package</option>
+                            <option value="premium_package">Premium Package</option>
+                        </select><br><br>
+                        <div id="videoDetails"></div><br>
+                    `;
+                    populateVideoPackage();
                     break;
                 case 'design_services':
-                    html += '<label for="serviceType">Specific Service Type:</label><br>';
-                    html += '<select id="serviceType" name="serviceType">';
-                    html += '<option value="branding_identity">Branding & Identity</option>';
-                    html += '<option value="promotion_materials">Promotional Materials</option>';
-                    html += '<option value="outdoors">Outdoor Advertising</option>';
-                    html += '<option value="packaging">Packaging Design</option>';
-                    html += '</select><br><br>';
-                    html += '<label for="details">Details (e.g., number of designs, specific items):</label><br>';
-                    html += '<input type="text" id="details" name="details"><br><br>';
+                    serviceDetailsDiv.innerHTML = `
+                        <h2>Design Services</h2>
+                        <label for="designType">Specific Design Needs:</label><br>
+                        <select id="designType" name="designType">
+                            <option value="branding_identity">Branding & Identity</option>
+                            <option value="promotion_materials">Promotional Materials</option>
+                            <option value="outdoors">Outdoor Advertising</option>
+                            <option value="packaging">Packaging Design</option>
+                        </select><br><br>
+                        <div id="designDetails"></div><br>
+                    `;
+                    populateDesignType();
                     break;
                 case 'web_development':
-                    html += '<label for="webType">Type:</label><br>';
-                    html += '<select id="webType" name="webType">';
-                    html += '<option value="dynamic_page_website">Dynamic Page Website</option>';
-                    html += '<option value="e_commerce">E-commerce Website</option>';
-                    html += '</select><br><br>';
-                    html += '<label for="packageLevel">Package Level:</label><br>';
-                    html += '<select id="packageLevel" name="packageLevel">';
-                    html += '<option value="starter">Starter</option>';
-                    html += '<option value="standard">Standard</option>';
-                    html += '<option value="premium">Premium</option>';
-                    html += '</select><br><br>';
+                    serviceDetailsDiv.innerHTML = `
+                        <h2>Web Development Services</h2>
+                        <label for="webType">Type:</label><br>
+                        <select id="webType" name="webType">
+                            <option value="dynamic_page_website">Dynamic Page Website</option>
+                            <option value="e_commerce_website">E-commerce Website</option>
+                        </select><br><br>
+                        <div id="webDetails"></div><br>
+                    `;
+                    populateWebType();
                     break;
                 case 'seo_services':
-                    html += '<label for="seoPackage">Package Type:</label><br>';
-                    html += '<select id="seoPackage" name="seoPackage">';
-                    html += '<option value="basic">Basic SEO</option>';
-                    html += '<option value="advanced">Advanced SEO</option>';
-                    html += '<option value="custom">Custom SEO Strategy</option>';
-                    html += '</select><br><br>';
-                    html += '<label for="seoDuration">Duration:</label><br>';
-                    html += '<input type="text" id="seoDuration" name="seoDuration"><br><br>';
+                    serviceDetailsDiv.innerHTML = `
+                        <h2>SEO Services</h2>
+                        <label for="seoPackage">Package Type:</label><br>
+                        <select id="seoPackage" name="seoPackage">
+                            <option value="basic_package">Basic Package</option>
+                            <option value="advanced_package">Advanced Package</option>
+                            <option value="custom_services">Custom Services</option>
+                        </select><br><br>
+                        <div id="seoDetails"></div><br>
+                    `;
+                    populateSEOType();
                     break;
                 default:
+                    serviceDetailsDiv.innerHTML = '';
                     break;
             }
-
-            detailsForm.innerHTML = html; // Populate form with dynamic HTML
         }
 
-        // Function to calculate quote based on selected options
+        // Function to populate Digital Marketing packages
+        function populateDigitalPackages() {
+            const digitalPlatformSelect = document.getElementById('digitalPlatform');
+            const selectedPlatform = digitalPlatformSelect.value;
+            const digitalPackageDiv = document.getElementById('digitalPackage');
+            
+            let options = '';
+            Object.keys(servicesData.services.digital_marketing[selectedPlatform].packages).forEach(packageKey => {
+                const packageData = servicesData.services.digital_marketing[selectedPlatform].packages[packageKey];
+                options += `
+                    <label for="${packageKey}">${packageKey}:</label><br>
+                    <input type="radio" id="${packageKey}" name="digitalPackage" value="${packageKey}">
+                    <label for="${packageKey}">Cost: NRs ${packageData.total_cost}, Reach: ${packageData.expected_reach}</label><br>
+                `;
+            });
+
+            digitalPackageDiv.innerHTML = options;
+        }
+
+        // Function to populate TikTok Video Creation package details
+        function populateVideoPackage() {
+            const videoPackageSelect = document.getElementById('videoPackage');
+            const selectedPackage = videoPackageSelect.value;
+            const videoDetailsDiv = document.getElementById('videoDetails');
+
+            let details = '';
+            const packageData = servicesData.services.tiktok_video_creation[selectedPackage];
+            details += `
+                <label for="videosCreated">Videos Created:</label><br>
+                <input type="text" id="videosCreated" name="videosCreated" value="${packageData.videos_created}" readonly><br><br>
+                <label for="price">Price:</label><br>
+                <input type="text" id="price" name="price" value="${packageData.price}" readonly><br><br>
+                <label for="duration">Duration:</label><br>
+                <input type="text" id="duration" name="duration" value="${packageData.duration}" readonly><br><br>
+            `;
+
+            videoDetailsDiv.innerHTML = details;
+        }
+
+        // Function to populate Design Services details based on type
+        function populateDesignType() {
+            const designTypeSelect = document.getElementById('designType');
+            const selectedType = designTypeSelect.value;
+            const designDetailsDiv = document.getElementById('designDetails');
+
+            let details = '';
+            const typeData = servicesData.services.design_services[selectedType];
+            Object.keys(typeData).forEach(serviceKey => {
+                const servicePrice = typeData[serviceKey];
+                details += `
+                    <label for="${serviceKey}">${serviceKey.replace(/_/g, ' ')}:</label><br>
+                    <input type="text" id="${serviceKey}" name="${serviceKey}" value="${servicePrice}" readonly><br><br>
+                `;
+            });
+
+            designDetailsDiv.innerHTML = details;
+        }
+
+        // Function to populate Web Development details based on type
+        function populateWebType() {
+            const webTypeSelect = document.getElementById('webType');
+            const selectedType = webTypeSelect.value;
+            const webDetailsDiv = document.getElementById('webDetails');
+
+            let details = '';
+            const typeData = selectedType === 'dynamic_page_website' ? servicesData.services.web_development.generic_rates.dynamic_page_website : servicesData.services.web_development.e_commerce_rates;
+            Object.keys(typeData).forEach(packageKey => {
+                const packagePrice = typeData[packageKey];
+                details += `
+                    <label for="${packageKey}">${packageKey.replace(/_/g, ' ')}:</label><br>
+                    <input type="text" id="${packageKey}" name="${packageKey}" value="${packagePrice}" readonly><br><br>
+                `;
+            });
+
+            webDetailsDiv.innerHTML = details;
+        }
+
+        // Function to populate SEO Services details based on package type
+        function populateSEOType() {
+            const seoPackageSelect = document.getElementById('seoPackage');
+            const selectedPackage = seoPackageSelect.value;
+            const seoDetailsDiv = document.getElementById('seoDetails');
+
+            let details = '';
+            const packageData = servicesData.services.seo_services[selectedPackage];
+            if (selectedPackage === 'custom_services') {
+                details += `
+                    <label for="customDescription">Description:</label><br>
+                    <textarea id="customDescription" name="customDescription" rows="4" readonly>${packageData.description}</textarea><br><br>
+                `;
+            } else {
+                Object.keys(packageData).forEach(key => {
+                    if (key !== 'description') {
+                        details += `
+                            <label for="${key}">${key.replace(/_/g, ' ')}:</label><br>
+                            <input type="text" id="${key}" name="${key}" value="${packageData[key]}" readonly><br><br>
+                        `;
+                    }
+                });
+            }
+
+            seoDetailsDiv.innerHTML = details;
+        }
+
+        // Function to calculate and display the quote
         function calculateQuote() {
-            const clientName = document.getElementById('name').value;
-            const companyName = document.getElementById('company').value;
-            const contactInfo = document.getElementById('contact').value;
-            const serviceType = document.getElementById('service').value;
-            let quoteDetails = '';
+            const serviceSelect = document.getElementById('service');
+            const selectedService = serviceSelect.value;
 
-            switch (serviceType) {
+            let quote = `Company: ${servicesData.company_name}\n`;
+            quote += `Name: ${document.getElementById('name').value}\n`;
+            quote += `Contact: ${document.getElementById('contact').value}\n\n`;
+            quote += `Selected Service: ${serviceSelect.options[serviceSelect.selectedIndex].text}\n\n`;
+
+            switch (selectedService) {
                 case 'digital_marketing':
-                    const platform = document.getElementById('platform').value;
-                    const packageSelected = document.getElementById('package').value;
-                    const expectedReach = document.getElementById('expectedReach').value;
-                    const digitalMarketingData = serviceData.digital_marketing[platform].packages[packageSelected];
-                    quoteDetails = `Service: Digital Marketing - ${platform}\n`;
-                    quoteDetails += `Package: ${packageSelected}\n`;
-                    quoteDetails += `Total Cost: ${digitalMarketingData.total_cost}\n`;
-                    quoteDetails += `Expected Reach: ${expectedReach}\n`;
+                    const digitalPlatformSelect = document.getElementById('digitalPlatform');
+                    const selectedPlatform = digitalPlatformSelect.value;
+                    quote += `Preferred Platform: ${digitalPlatformSelect.options[digitalPlatformSelect.selectedIndex].text}\n`;
+
+                    const digitalPackages = document.getElementsByName('digitalPackage');
+                    digitalPackages.forEach(packageOption => {
+                        if (packageOption.checked) {
+                            const packageKey = packageOption.value;
+                            const packageData = servicesData.services.digital_marketing[selectedPlatform].packages[packageKey];
+                            quote += `Selected Package: ${packageKey}\n`;
+                            quote += `Total Cost: NRs ${packageData.total_cost}\n`;
+                            quote += `Expected Reach: ${packageData.expected_reach}\n`;
+                        }
+                    });
                     break;
                 case 'google_ads':
-                    const impressions = document.getElementById('impressions').value;
-                    const campaigns = document.getElementById('campaigns').value;
-                    const includeCredit = document.querySelector('input[name="includeCredit"]:checked');
-                    const includeCreditValue = includeCredit ? includeCredit.value : 'No';
-                    const googleAdsData = serviceData.digital_marketing.google_ads;
-                    quoteDetails = `Service: Google Ads\n`;
-                    quoteDetails += `Expected Impressions: ${impressions}\n`;
-                    quoteDetails += `Number of Campaigns: ${campaigns}\n`;
-                    quoteDetails += `Include Credit: ${includeCreditValue}\n`;
+                    quote += `Impressions: ${document.getElementById('impressions').value}\n`;
+                    quote += `Number of Campaigns: ${document.getElementById('campaigns').value}\n`;
+                    quote += `Designs: ${document.getElementById('designs').value}\n`;
+                    quote += `Total Cost Per Month (Including Credit): ${document.getElementById('totalCost').value}\n`;
                     break;
                 case 'tiktok_video_creation':
-                    const packageType = document.getElementById('packageType').value;
-                    const numberOfVideos = document.getElementById('numberOfVideos').value;
-                    const tiktokData = serviceData.tiktok_video_creation[packageType];
-                    quoteDetails = `Service: TikTok Video Creation\n`;
-                    quoteDetails += `Package Type: ${packageType}\n`;
-                    quoteDetails += `Number of Videos: ${numberOfVideos}\n`;
-                    quoteDetails += `Total Cost: ${tiktokData.price}\n`;
+                    const videoPackageSelect = document.getElementById('videoPackage');
+                    const selectedPackage = videoPackageSelect.value;
+                    quote += `Package Type: ${videoPackageSelect.options[videoPackageSelect.selectedIndex].text}\n`;
+
+                    const videosCreated = document.getElementById('videosCreated').value;
+                    const price = document.getElementById('price').value;
+                    quote += `Videos Created: ${videosCreated}\n`;
+                    quote += `Price: ${price}\n`;
+                    quote += `Duration: ${document.getElementById('duration').value}\n`;
                     break;
                 case 'design_services':
-                    const serviceTypeDesign = document.getElementById('serviceType').value;
-                    const details = document.getElementById('details').value;
-                    const designData = serviceData.design_services[serviceTypeDesign];
-                    quoteDetails = `Service: Design Services - ${serviceTypeDesign}\n`;
-                    quoteDetails += `Details: ${details}\n`;
-                    quoteDetails += `Total Cost: ${designData[details]}\n`; // Assuming details correspond to pricing
+                    const designTypeSelect = document.getElementById('designType');
+                    const selectedType = designTypeSelect.value;
+                    quote += `Specific Design Needs: ${designTypeSelect.options[designTypeSelect.selectedIndex].text}\n`;
+
+                    const designDetails = document.getElementById('designDetails').querySelectorAll('input[type="text"]');
+                    designDetails.forEach(detail => {
+                        quote += `${detail.name.replace(/_/g, ' ')}: ${detail.value}\n`;
+                    });
                     break;
                 case 'web_development':
-                    const webType = document.getElementById('webType').value;
-                    const packageLevel = document.getElementById('packageLevel').value;
-                    const webData = (webType === 'dynamic_page_website') ? serviceData.web_development.generic_rates[webType][packageLevel] : serviceData.web_development.e_commerce_rates[packageLevel];
-                    quoteDetails = `Service: Web Development - ${webType}\n`;
-                    quoteDetails += `Package Level: ${packageLevel}\n`;
-                    quoteDetails += `Total Cost: ${webData}\n`;
+                    const webTypeSelect = document.getElementById('webType');
+                    const selectedWebType = webTypeSelect.value;
+                    quote += `Type: ${webTypeSelect.options[webTypeSelect.selectedIndex].text}\n`;
+
+                    const webDetails = document.getElementById('webDetails').querySelectorAll('input[type="text"]');
+                    webDetails.forEach(detail => {
+                        quote += `${detail.name.replace(/_/g, ' ')}: ${detail.value}\n`;
+                    });
                     break;
                 case 'seo_services':
-                    const seoPackage = document.getElementById('seoPackage').value;
-                    const seoDuration = document.getElementById('seoDuration').value;
-                    const seoData = serviceData.seo_services[seoPackage];
-                    quoteDetails = `Service: SEO Services - ${seoPackage}\n`;
-                    quoteDetails += `Duration: ${seoDuration}\n`;
-                    quoteDetails += `Price per Month: ${seoData.price_per_month}\n`;
+                    const seoPackageSelect = document.getElementById('seoPackage');
+                    const selectedSeoPackage = seoPackageSelect.value;
+                    quote += `Package Type: ${seoPackageSelect.options[seoPackageSelect.selectedIndex].text}\n`;
+
+                    const seoDetails = document.getElementById('seoDetails').querySelectorAll('input[type="text"], textarea');
+                    seoDetails.forEach(detail => {
+                        quote += `${detail.name.replace(/_/g, ' ')}: ${detail.value}\n`;
+                    });
                     break;
                 default:
                     break;
             }
 
-            // Display quote details
-            document.getElementById('quoteResult').textContent = `Client: ${clientName}\nCompany: ${companyName}\nContact: ${contactInfo}\n\n${quoteDetails}`;
+            const quoteResultDiv = document.getElementById('quoteResult');
+            quoteResultDiv.textContent = quote;
         }
-
     </script>
 </body>
 </html>
